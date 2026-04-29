@@ -1,0 +1,13 @@
+data:
+  raw_train_path: "data/raw/train.csv"
+  raw_test_path: "data/raw/test.csv"
+  processed_train_path: "data/processed/train_cleaned.csv"
+  processed_test_path: "data/processed/test_cleaned.csv"
+
+model:
+  target_col: "SalePrice"
+  id_col: "Id"
+
+preprocessing:
+  outlier_ids: [ 1299, 524 ]
+  missing_threshold: 7

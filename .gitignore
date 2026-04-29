@@ -1,0 +1,41 @@
+# Environments
+venv/
+.env
+*.egg-info/
+dist/
+build/
+
+# PyCharm settings
+.idea/
+*.iml
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Data (Never upload raw data to GitHub!)
+data/raw/
+data/processed/
+*.csv
+*.xlsx
+*.db
+
+# Models (can be large)
+models/*.pkl
+models/*.joblib
+models/*.json
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# OS specific
+Thumbs.db
+Desktop.ini
+.DS_Store
