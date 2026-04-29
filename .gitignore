@@ -35,6 +35,9 @@ models/*.json
 # Logs
 *.log
 
+# CatBoost info
+catboost_info/
+
 # OS specific
 Thumbs.db
 Desktop.ini
