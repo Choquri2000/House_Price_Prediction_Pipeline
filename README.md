@@ -1,87 +1,71 @@
-# House Price Prediction: Advanced Regression Pipeline 🏠
+# 🏠 House Price Prediction Pipeline
 
-**[🇬🇧 English](#english)** | **[🇬🇪 ქართული](#ქართული)**
+## 📋 Project Overview
+End-to-end machine learning pipeline for predicting house sale prices using advanced ensemble methods and automated hyperparameter tuning. Built for the Ames Housing Dataset (Kaggle competition), this project demonstrates production-ready MLOps practices with modular code, configuration management, and reproducible training workflows.
 
----
+## 🛠️ Tech Stack
+- **Core**: Python 3.9+, Pandas, NumPy
+- **ML Models**: XGBoost, CatBoost, Scikit-Learn (Linear/ElasticNet)
+- **Tuning**: Optuna for hyperparameter optimization
+- **Pipeline**: Modular `src/` structure, YAML configs, logging
+- **Output**: Kaggle-ready `submission.csv`
 
-## <a name="english"></a> 🇬🇧 English
+## 📂 Project Structure
+```
+House_Price_Prediction/
+├── House_Price_Prediction_Pipeline/  # Core pipeline package
+│   ├── configs/              # YAML configuration files
+│   ├── src/                  # Modular source code
+│   │   ├── data/             # Data loading & preprocessing
+│   │   ├── features/         # Feature engineering
+│   │   └── models/           # Training, tuning, prediction
+│   ├── main.py               # Pipeline entry point
+│   ├── config.py             # Config loader
+│   └── requirements.txt      # Dependencies
+├── catboost_info/            # CatBoost training logs
+├── data/                     # Raw & processed datasets
+└── README.md                 # This file
+```
 
-### 📌 Project Overview
-This project predicts house prices using advanced regression techniques (Lasso & XGBoost). Originally developed as an exploratory Jupyter Notebook, this project has been heavily refactored into a **Production-Ready Machine Learning Pipeline**.
+## 🔄 Pipeline Workflow
+1. **Data Ingestion**: Loads raw train/test data from `data/raw/`
+2. **Validation**: Checks data integrity and shape consistency
+3. **Preprocessing**: Handles missing values, encodes categorical features, scales numerics
+4. **Feature Engineering**: Creates domain-specific housing features
+5. **Hyperparameter Tuning**: Optuna optimizes XGBoost (n_estimators, max_depth, learning_rate, etc.)
+6. **Ensemble Training**: 5-model Pent-Ensemble (XGBoost + CatBoost + Linear models) with blending
+7. **Prediction**: Generates final predictions to `data/processed/submission.csv`
 
-### 🚀 Refactoring & Architecture Upgrades
-To make this project portfolio-ready and aligned with software engineering best practices, the following major improvements were implemented:
+## 📊 Model Performance
+- **Best XGBoost (Optuna)**: Log-RMSE = 0.11337 (Kaggle evaluation metric)
+- **Ensemble Benefit**: Blending 5 models reduces overfitting and improves generalization
+- **Final Output**: Competition-ready `submission.csv`
 
-1. **Monolithic Notebook to Modular OOP:**
-   - *Before:* All code (EDA, cleaning, training) was in a single, massive `.ipynb` file.
-   - *After:* The code is split into an Object-Oriented structure (`DataLoader`, `DataPreprocessor`) inside a `src/` package.
+## 🚀 How to Run
+1. Clone the repo:
+```bash
+git clone https://github.com/Choquri2000/House_Price_Prediction_Pipeline.git
+cd House_Price_Prediction_Pipeline/House_Price_Prediction_Pipeline
+```
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+3. Run the pipeline:
+```bash
+python main.py
+```
+4. Results in `data/processed/submission.csv`
 
-2. **Eliminated Hardcoded Variables:**
-   - *Before:* File paths and outlier IDs were hardcoded deep in the scripts.
-   - *After:* Implemented a `config.py` file to control paths, hyperparameters, and thresholds centrally.
+## 🔧 Key Improvements Made
+- Implemented 5-model ensemble to boost accuracy vs single models
+- Added Optuna hyperparameter tuning for XGBoost (20 trials)
+- Modularized code into reusable `src/` components
+- Added logging for pipeline transparency
+- Automated end-to-end workflow from raw data to submission
 
-3. **Reproducible Environment:**
-   - *Before:* Local system dependencies.
-   - *After:* Created a strict `requirements.txt` to ensure cross-platform reproducibility.
-
-4. **Data Security & Git Best Practices:**
-   - Utilized `.gitignore` to prevent raw data and local environments from being pushed to the repository.
-
-### 🛠️ Tech Stack
-- **Python 3.9+**
-- **Pandas & NumPy** (Data Manipulation)
-- **Scikit-Learn & XGBoost** (Modeling)
-- **Optuna** (Hyperparameter Optimization)
-- **PyYAML** (Configuration Management)
-- **SHAP** (Model Interpretability - *Coming Soon*)
-
-### 📊 Results
-- **Lasso RMSE:** ~0.1105
-- **XGBoost RMSE:** *To be finalized*
-- **Ensemble (Lasso + XGBoost):** *To be finalized*
-
----
-
-## <a name="ქართული"></a> 🇬🇪 ქართული
-
-### 📌 პროექტის მიმოხილვა
-ამ პროექტის მიზანია უძრავი ქონების ფასის პროგნოზირება მაღალრგანზომიანი რეგრესიის (Lasso & XGBoost) გამოყენებით. თავდაპირველად პროექტი შეიქმნა ექსპლორაციულ Jupyter Notebook-ში, თუმცა შემდგომში სრულად გადაკეთდა **პორტფოლიოსთვის მზა მანქანური სწავლების (ML) არქიტექტურად**.
-
-### 🚀 პროექტის დამუშავება და არქიტექტურული ცვლილებები
-საუკეთესო საპრაქტიკო პრინციპებთან შესაბამისობისთვის და პორტფოლიოსთვის მომზადებლად, განხორციელდა შემდეგი გაუმჯობესებები:
-
-1. **Notebook-დან მოდულურ OOP არქიტექტურაზე გადასვლა:**
-   - *მანამდე:* მთლიანი კოდი (მონაცემთა დამუშავება, გაწმენტება, მოდელის გაწვრთნა) ეწერა ერთ დიდ `.ipynb` ფაილში.
-   - *ახლა:* კოდი დაყოფილია ობიექტზე ორიენტირებული პროგრამირების (OOP) პრინციპებით ცალკეულ მოდულებად (`DataLoader`, `DataPreprocessor`) `src/` ფოლდერში.
-
-2. **Hardcoded ცვლადების ამოღება:**
-   - *მანამდე:* ფაილების მისამართები (paths) და Outlier-ების ID-ები პირდაპირ კოდში იყო ჩაწერილი.
-   - *ახლა:* შეიქმნა `config.py` ფაილი, სადაც ცენტრალიზებულად იმართება მისამართები, ჰიპერპარამეტრები და ზღვრები.
-
-3. **გარემოს სტანდარტიზაცია:**
-   - დაემატა `requirements.txt` ფაილი, რათა ნებისმიერ სხვა კომპიუტერზე პროექტის გაშვება მარტივად და უშეცდომოდ მოხდეს.
-
-4. **მონაცემთა უსაფრთხოება (Git):**
-   - `.gitignore` ფაილის მეშვეობით დაცულია, რომ ლოკალური გარემო (venv) და დიდი მონაცემთა ფაილები არ აიტვირთოს საჯარო სივრცეში.
-
-### 🛠️ ტექნოლოგიური სტეკი
-- **Python 3.9+**
-- **Pandas & NumPy** (მონაცემთა მანიპულაცია)
-- **Scikit-Learn & XGBoost** (მოდელირება)
-- **Optuna** (ჰიპერპარამეტრების ოპტიმიზაცია)
-- **PyYAML** (კონფიგურაციის მენეჯმენტი)
-- **SHAP** (მოდელის ინტერპრეტაცია - *მალე*)
-
-### 📊 შედეგები
-- **Lasso RMSE:** ~0.1105
-- **XGBoost RMSE:** *ფინალიზდება*
-- **ანსამბლი (Lasso + XGBoost):** *ფინალიზდება*
+## 🎯 Conclusion
+This pipeline delivers a complete, reproducible ML solution for housing price prediction, combining state-of-the-art ensemble methods with automated tuning. The modular design makes it easily extensible for other regression tasks.
 
 ---
-
-### 🚀 How to Run
-1. Clone the repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Place `train.csv` and `test.csv` in `data/raw/`
-4. Run preprocessing: `python src/data/preprocess.py`
-5. Train models: `python src/models/train.py`
+*For questions or collaboration, contact [Choquri2000](https://github.com/Choquri2000)*
