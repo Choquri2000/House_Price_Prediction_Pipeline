@@ -1,71 +1,76 @@
 # 🏠 House Price Prediction Pipeline
 
-## 📋 Project Overview
-End-to-end machine learning pipeline for predicting house sale prices using advanced ensemble methods and automated hyperparameter tuning. Built for the Ames Housing Dataset (Kaggle competition), this project demonstrates production-ready MLOps practices with modular code, configuration management, and reproducible training workflows.
-
-## 🛠️ Tech Stack
-- **Core**: Python 3.9+, Pandas, NumPy
-- **ML Models**: XGBoost, CatBoost, Scikit-Learn (Linear/ElasticNet)
-- **Tuning**: Optuna for hyperparameter optimization
-- **Pipeline**: Modular `src/` structure, YAML configs, logging
-- **Output**: Kaggle-ready `submission.csv`
-
-## 📂 Project Structure
-```
-House_Price_Prediction/
-├── House_Price_Prediction_Pipeline/  # Core pipeline package
-│   ├── configs/              # YAML configuration files
-│   ├── src/                  # Modular source code
-│   │   ├── data/             # Data loading & preprocessing
-│   │   ├── features/         # Feature engineering
-│   │   └── models/           # Training, tuning, prediction
-│   ├── main.py               # Pipeline entry point
-│   ├── config.py             # Config loader
-│   └── requirements.txt      # Dependencies
-├── catboost_info/            # CatBoost training logs
-├── data/                     # Raw & processed datasets
-└── README.md                 # This file
-```
-
-## 🔄 Pipeline Workflow
-1. **Data Ingestion**: Loads raw train/test data from `data/raw/`
-2. **Validation**: Checks data integrity and shape consistency
-3. **Preprocessing**: Handles missing values, encodes categorical features, scales numerics
-4. **Feature Engineering**: Creates domain-specific housing features
-5. **Hyperparameter Tuning**: Optuna optimizes XGBoost (n_estimators, max_depth, learning_rate, etc.)
-6. **Ensemble Training**: 5-model Pent-Ensemble (XGBoost + CatBoost + Linear models) with blending
-7. **Prediction**: Generates final predictions to `data/processed/submission.csv`
-
-## 📊 Model Performance
-- **Best XGBoost (Optuna)**: Log-RMSE = 0.11337 (Kaggle evaluation metric)
-- **Ensemble Benefit**: Blending 5 models reduces overfitting and improves generalization
-- **Final Output**: Competition-ready `submission.csv`
-
-## 🚀 How to Run
-1. Clone the repo:
-```bash
-git clone https://github.com/Choquri2000/House_Price_Prediction_Pipeline.git
-cd House_Price_Prediction_Pipeline/House_Price_Prediction_Pipeline
-```
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-3. Run the pipeline:
-```bash
-python main.py
-```
-4. Results in `data/processed/submission.csv`
-
-## 🔧 Key Improvements Made
-- Implemented 5-model ensemble to boost accuracy vs single models
-- Added Optuna hyperparameter tuning for XGBoost (20 trials)
-- Modularized code into reusable `src/` components
-- Added logging for pipeline transparency
-- Automated end-to-end workflow from raw data to submission
-
-## 🎯 Conclusion
-This pipeline delivers a complete, reproducible ML solution for housing price prediction, combining state-of-the-art ensemble methods with automated tuning. The modular design makes it easily extensible for other regression tasks.
+🌐 **აირჩიეთ ენა / Choose Language:**  
+[🇬🇪 ქართული](#georgian) | [🇺🇸 English](#english)
 
 ---
-*For questions or collaboration, contact [Choquri2000](https://github.com/Choquri2000)*
+
+<a name="georgian"></a>
+## 🇬🇪 ქართული ვერსია
+
+### 📝 პროექტის მიმოხილვა
+ეს არის **Data Science** პაიპლაინი სახლის ფასების პროგნოზირებისთვის, რომელიც იყენებს ანსამბლურ მეთოდებსა და ჰიპერპარამეტრების ავტომატიზებულ ოპტიმიზაციას. პროექტი აგებულია Ames Housing-ის მონაცემებზე და ფოკუსირებულია კოდის მოდულურობასა და MLOps-ის პრინციპებზე.
+
+### 🛠️ ტექნოლოგიური სტეკი
+- **Core:** Python, Pandas, NumPy
+- **ML Models:** XGBoost, CatBoost, Scikit-Learn (Linear/ElasticNet)
+- **Tuning:** **Optuna** ჰიპერპარამეტრების ოპტიმიზაციისთვის
+- **Architecture:** მოდულური `src/` სტრუქტურა, YAML კონფიგურაციები
+
+### 🔄 სამუშაო პროცესი (Workflow)
+1. **Data Ingestion:** ნედლი მონაცემების ჩატვირთვა `data/raw/`-დან.
+2. **Validation:** მონაცემთა მთლიანობისა და სტრუქტურის ვალიდაცია.
+3. **Preprocessing:** გამოტოვებული მნიშვნელობების შევსება, კატეგორიული ენკოდინგი და სკალირება.
+4. **Feature Engineering:** დომენზე მორგებული ახალი მახასიათებლების შექმნა.
+5. **Hyperparameter Tuning:** XGBoost-ის ოპტიმიზაცია Optuna-ს მეშვეობით.
+6. **Ensemble Training:** **Pent-Ensemble** (5 მოდელის ბლენდინგი) მაქსიმალური სიზუსტისთვის.
+7. **Prediction:** საბოლოო `submission.csv` ფაილის გენერაცია.
+
+### 📊 მოდელის შედეგები
+- **Best XGBoost (Optuna):** Log-RMSE = 0.11337.
+- **Ensemble-ის უპირატესობა:** მოდელების გაერთიანება ამცირებს Overfitting-ს და აუმჯობესებს განზოგადებას.
+
+### 🚀 გაშვების ინსტრუქცია
+```bash
+git clone https://github.com/Choquri2000/House_Price_Prediction_Pipeline.git
+pip install -r requirements.txt
+python main.py
+```
+
+---
+
+<a name="english"></a>
+## 🇺🇸 English Version
+
+### 📋 Project Overview
+End-to-end **Data Science** pipeline for predicting house prices using advanced ensemble methods and automated hyperparameter tuning. This project demonstrates production-ready MLOps practices with modular code and reproducible workflows.
+
+### 🛠️ Tech Stack
+- **Core**: Python, Pandas, NumPy
+- **ML Models**: XGBoost, CatBoost, Scikit-Learn
+- **Tuning**: **Optuna** for hyperparameter optimization
+- **Pipeline**: Modular `src/` structure, YAML configs, logging
+
+### 🔄 Pipeline Workflow
+1. **Data Ingestion**: Loading raw train/test data from `data/raw/`.
+2. **Validation**: Checking data integrity and shape consistency.
+3. **Preprocessing**: Handling missing values, categorical encoding, and scaling.
+4. **Feature Engineering**: Creating domain-specific housing features.
+5. **Hyperparameter Tuning**: Optuna optimizes XGBoost parameters for peak performance.
+6. **Ensemble Training**: 5-model **Pent-Ensemble** blending (XGBoost + CatBoost + Linear models).
+7. **Prediction**: Generating Kaggle-ready `submission.csv`.
+
+### 📊 Performance Highlights
+- **Best XGBoost (Optuna)**: Log-RMSE = 0.11337.
+- **Ensemble Benefit**: Blending 5 models significantly reduces overfitting and improves generalization.
+- **Final Output**: Competition-ready `submission.csv` located in `data/processed/`.
+
+### 🚀 Setup & Run
+```bash
+git clone https://github.com/Choquri2000/House_Price_Prediction_Pipeline.git
+pip install -r requirements.txt
+python main.py
+```
+
+---
+*📩 Contact [Choquri2000](https://github.com/Choquri2000) for Data Science & ML collaborations.*
