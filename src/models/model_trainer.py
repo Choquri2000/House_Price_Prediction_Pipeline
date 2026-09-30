@@ -7,9 +7,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
-import matplotlib
-matplotlib.use('TkAgg') # 🚀 This forces a physical window
-import matplotlib.pyplot as plt
 
 
 class ModelTrainer:
