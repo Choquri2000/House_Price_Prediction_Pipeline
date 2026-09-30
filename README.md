@@ -86,7 +86,6 @@ The gradient-boosting models capture non-linear interactions, and the regularise
 git clone https://github.com/Choquri2000/House_Price_Prediction_Pipeline.git
 cd House_Price_Prediction_Pipeline
 pip install -r requirements.txt
-pip install lightgbm catboost
 ```
 
 1. Download `train.csv` and `test.csv` from the [Kaggle competition page](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data) into `data/raw/`. Data files are excluded from version control.
@@ -94,7 +93,7 @@ pip install lightgbm catboost
    ```bash
    python main.py
    ```
-3. Output: `data/processed/submission.csv`
+3. Output: `data/processed/submission.csv` and `data/processed/feature_importance.png`
 
 ---
 
@@ -203,7 +202,6 @@ Gradient boosting მოდელები არაწრფივ დამო
 git clone https://github.com/Choquri2000/House_Price_Prediction_Pipeline.git
 cd House_Price_Prediction_Pipeline
 pip install -r requirements.txt
-pip install lightgbm catboost
 ```
 
 1. ჩამოტვირთეთ `train.csv` და `test.csv` [Kaggle-ის შეჯიბრის გვერდიდან](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data) და მოათავსეთ `data/raw/` დირექტორიაში. მონაცემთა ფაილები რეპოზიტორიაში არ ინახება.
@@ -211,7 +209,7 @@ pip install lightgbm catboost
    ```bash
    python main.py
    ```
-3. შედეგი: `data/processed/submission.csv`
+3. შედეგი: `data/processed/submission.csv` და `data/processed/feature_importance.png`
 
 ---
 

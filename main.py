@@ -61,6 +61,9 @@ def main():
         plt.figure(figsize=(10, 6))
         sns.barplot(x='Importance', y='Feature', data=importances, palette='Blues_r', hue='Feature', legend=False)
         plt.title('Top 10 Critical Market Drivers')
+        plt.tight_layout()
+        os.makedirs("data/processed", exist_ok=True)
+        plt.savefig("data/processed/feature_importance.png", dpi=150)
         plt.show()
 
         # 4. Blended Prediction
@@ -84,8 +87,9 @@ def main():
         pd.DataFrame({id_col: test_cleaned[id_col], target_col: final_preds}).to_csv(output_path, index=False)
         logging.info(f"🏆 Pent-Ensemble Mission Complete: {output_path}")
 
-    except Exception as e:
-        logging.error(f"❌ Error: {e}")
+    except Exception:
+        logging.exception("❌ Pipeline failed")
+        raise
 
 if __name__ == "__main__":
     main()
