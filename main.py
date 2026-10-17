@@ -3,16 +3,13 @@ import os
 import logging
 import numpy as np
 import pandas as pd
-import xgboost as xgb
-import lightgbm as lgb
 import seaborn as sns
 import matplotlib.pyplot as plt
-from catboost import CatBoostRegressor
-from sklearn.linear_model import LassoCV, ElasticNetCV
 from sklearn.model_selection import train_test_split
 from src.data.data_loader import DataLoader
 from src.features.preprocessor import DataPreprocessor
 from src.models.tuner import HyperparameterTuner
+from src.models.ensemble import build_models, blend
 
 # %%
 def main():
@@ -42,16 +39,16 @@ def main():
         # 2. XGBoost Tuning
         logging.info("🧠 Tuning XGBoost...")
         tuner = HyperparameterTuner(X_train, y_train, X_val, y_val)
-        best_params_xgb = tuner.tune(n_trials=20)
+        n_trials = loader.config.get('tuning', {}).get('n_trials', 20)
+        best_params_xgb = tuner.tune(n_trials=n_trials)
 
         # 3. Training the Pent-Squad
         logging.info("⚔️ Training the 5-Model Ensemble...")
 
-        m_xgb = xgb.XGBRegressor(**best_params_xgb).fit(X_train, y_train)
-        m_lgb = lgb.LGBMRegressor(objective='regression', num_leaves=5, learning_rate=0.05, n_estimators=1200, verbosity=-1).fit(X_train, y_train)
-        m_cat = CatBoostRegressor(iterations=2000, learning_rate=0.03, depth=4, l2_leaf_reg=4, bootstrap_type='Bernoulli', subsample=0.6, silent=True).fit(X_train, y_train)
-        m_lasso = LassoCV(alphas=[0.0001, 0.0005, 0.001], cv=5).fit(X_train, y_train)
-        m_enet = ElasticNetCV(l1_ratio=[.1, .5, .9], cv=5).fit(X_train, y_train)
+        models = build_models(best_params_xgb)
+        for model in models.values():
+            model.fit(X_train, y_train)
+        m_xgb = models['xgb']
 
         # 📊 Visualization: Top Market Drivers
         sns.set(style="darkgrid")
@@ -70,14 +67,9 @@ def main():
         logging.info("🤝 Blending predictions...")
         test_feats = test_cleaned.drop(columns=[target_col, id_col])
         
-        p_xgb = np.expm1(m_xgb.predict(test_feats))
-        p_lgb = np.expm1(m_lgb.predict(test_feats))
-        p_cat = np.expm1(m_cat.predict(test_feats))
-        p_lasso = np.expm1(m_lasso.predict(test_feats))
-        p_enet = np.expm1(m_enet.predict(test_feats))
-
-        # ⚖️ Weighted Master Ratio
-        final_preds = (0.25 * p_xgb) + (0.25 * p_lgb) + (0.20 * p_cat) + (0.15 * p_lasso) + (0.15 * p_enet)
+        # Blend in price space: expm1 each prediction, then apply the fixed weights
+        preds = {name: np.expm1(m.predict(test_feats)) for name, m in models.items()}
+        final_preds = blend(preds)
 
         # 5. Export Results
         output_dir = "data/processed"

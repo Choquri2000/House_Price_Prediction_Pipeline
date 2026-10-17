@@ -11,3 +11,5 @@ model:
 preprocessing:
   outlier_ids: [ 1299, 524 ]
   missing_threshold: 7
+tuning:
+  n_trials: 20   # Optuna trials for XGBoost; raise (e.g. 100) for a longer search

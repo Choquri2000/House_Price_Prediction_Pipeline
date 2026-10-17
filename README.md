@@ -14,6 +14,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.9%2B-blue" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/Kaggle-Log--RMSE%200.11337-20BEFF" alt="Kaggle Log-RMSE 0.11337">
+  <img src="https://github.com/Choquri2000/House_Price_Prediction_Pipeline/actions/workflows/tests.yml/badge.svg" alt="tests">
 </p>
 
 ---
@@ -28,13 +29,26 @@ An end-to-end regression pipeline that predicts residential sale prices on the *
 |--------|-------|
 | **Kaggle public leaderboard (Log-RMSE)** | **0.11337** |
 
+**5-fold cross-validation** (`python evaluate.py`, RMSE on log price, mean ± std; XGBoost uses fixed default parameters here, not the Optuna result):
+
+| Model | CV RMSE |
+|-------|---------|
+| XGBoost | 0.1157 ± 0.0062 |
+| LightGBM | 0.1219 ± 0.0088 |
+| CatBoost | 0.1116 ± 0.0076 |
+| LassoCV | 0.1182 ± 0.0104 |
+| ElasticNetCV | 0.1121 ± 0.0096 |
+| **Weighted blend** | **0.1103 ± 0.0079** |
+
+The blend scores better than every single model.
+
 ---
 
 ### Pipeline
 
 ```
 data/raw/*.csv ─▶ DataLoader ─▶ DataPreprocessor ─▶ Optuna (XGBoost) ─▶ 5-model ensemble ─▶ submission.csv
-                  (validation)   (cleaning, features,  (20 trials)          (weighted blend)
+                  (validation)   (cleaning, features,  (n_trials, default 20) (weighted blend)
                                   encoding, scaling)
 ```
 
@@ -55,7 +69,8 @@ data/raw/*.csv ─▶ DataLoader ─▶ DataPreprocessor ─▶ Optuna (XGBoost)
 - **Target:** `log1p(SalePrice)`. Predictions are converted back with `expm1`.
 
 **3. Hyperparameter optimization**: `src/models/tuner.py`
-- Optuna (default TPE sampler), 20 trials, minimising RMSE on an 80/20 hold-out split (`random_state=42`).
+- Optuna (default TPE sampler), minimising RMSE on an 80/20 hold-out split (`random_state=42`).
+- Number of trials is set by `tuning.n_trials` in `configs/config.yaml` (default 20; raise it for a longer search).
 
 | Parameter | Search range |
 |-----------|--------------|
@@ -66,7 +81,7 @@ data/raw/*.csv ─▶ DataLoader ─▶ DataPreprocessor ─▶ Optuna (XGBoost)
 | `colsample_bytree` | 0.5 – 1.0 |
 | `gamma` | 1e-8 – 1.0 (log) |
 
-**4. Weighted ensemble**: `main.py`
+**4. Weighted ensemble**: `src/models/ensemble.py` (used by `main.py`)
 
 | Model | Configuration | Weight |
 |-------|---------------|--------|
@@ -94,6 +109,7 @@ pip install -r requirements.txt
    python main.py
    ```
 3. Output: `data/processed/submission.csv` and `data/processed/feature_importance.png`
+4. Optional: `python evaluate.py` runs 5-fold cross-validation (`--folds N` to change); `pytest` runs the tests.
 
 ---
 
@@ -101,16 +117,19 @@ pip install -r requirements.txt
 
 ```
 ├── main.py                     # Pipeline entry point (preprocessing → tuning → ensemble → submission)
-├── configs/config.yaml         # Data paths, target/ID columns, preprocessing settings
+├── evaluate.py                 # K-fold CV of each model and of the blend
+├── configs/config.yaml         # Data paths, target/ID columns, tuning trials
 ├── requirements.txt
+├── tests/                      # pytest suite (runs on synthetic data, no Kaggle files needed)
+├── .github/workflows/tests.yml # CI: pytest on every push
 └── src/
     ├── data/
-    │   ├── data_loader.py      # Config-driven loading and schema validation
-    │   └── preprocess.py       # Earlier preprocessing version (not used by main.py)
+    │   └── data_loader.py      # Config-driven loading and schema validation
     ├── features/
     │   └── preprocessor.py     # Cleaning, feature engineering, encoding, scaling
     └── models/
         ├── tuner.py            # Optuna hyperparameter search for XGBoost
+        ├── ensemble.py         # The five models and the blend weights
         ├── model_trainer.py    # Single-model XGBoost trainer (standalone)
         └── predictor.py        # Inference with a saved model (standalone)
 ```
@@ -119,10 +138,9 @@ pip install -r requirements.txt
 
 ### Roadmap
 
-- K-fold cross-validation for more reliable model comparison
 - Learning the ensemble weights with a stacking meta-model instead of fixed weights
 - Refitting the final models on the full training set
-- Unit tests and a CI workflow (GitHub Actions)
+- Tuning inside the CV loop (currently `evaluate.py` uses fixed default XGBoost parameters)
 
 <p align="right"><a href="#georgian">🇬🇪 ქართული ↓</a></p>
 
@@ -145,6 +163,19 @@ pip install -r requirements.txt
 | მეტრიკა | შედეგი |
 |---------|--------|
 | **Kaggle public leaderboard (Log-RMSE)** | **0.11337** |
+
+**5-fold cross-validation** (`python evaluate.py`, RMSE ლოგარითმულ ფასზე, საშუალო ± სტანდარტული გადახრა; აქ XGBoost ფიქსირებულ ნაგულისხმევ პარამეტრებს იყენებს, Optuna-ს შედეგს არა):
+
+| მოდელი | CV RMSE |
+|--------|---------|
+| XGBoost | 0.1157 ± 0.0062 |
+| LightGBM | 0.1219 ± 0.0088 |
+| CatBoost | 0.1116 ± 0.0076 |
+| LassoCV | 0.1182 ± 0.0104 |
+| ElasticNetCV | 0.1121 ± 0.0096 |
+| **შეწონილი ensemble** | **0.1103 ± 0.0079** |
+
+ensemble ყველა ცალკეულ მოდელზე უკეთეს შედეგს აჩვენებს.
 
 ---
 
@@ -171,7 +202,8 @@ data/raw/*.csv ─▶ DataLoader ─▶ DataPreprocessor ─▶ Optuna (XGBoost)
 - **სამიზნე ცვლადი:** `log1p(SalePrice)`. პროგნოზი საწყის მასშტაბზე `expm1`-ით ბრუნდება.
 
 **3. Hyperparameter optimization**: `src/models/tuner.py`
-- Optuna (ნაგულისხმევი TPE sampler), 20 ცდა. მინიმიზდება RMSE 80/20 hold-out გაყოფაზე (`random_state=42`).
+- Optuna (ნაგულისხმევი TPE sampler). მინიმიზდება RMSE 80/20 hold-out გაყოფაზე (`random_state=42`).
+- ცდების რაოდენობა განისაზღვრება `configs/config.yaml`-ის `tuning.n_trials` პარამეტრით (ნაგულისხმევი 20; გრძელი ძიებისთვის გაზარდეთ).
 
 | პარამეტრი | საძიებო დიაპაზონი |
 |-----------|--------------------|
@@ -182,7 +214,7 @@ data/raw/*.csv ─▶ DataLoader ─▶ DataPreprocessor ─▶ Optuna (XGBoost)
 | `colsample_bytree` | 0.5 – 1.0 |
 | `gamma` | 1e-8 – 1.0 (log) |
 
-**4. შეწონილი ensemble**: `main.py`
+**4. შეწონილი ensemble**: `src/models/ensemble.py` (გამოიყენება `main.py`-ში)
 
 | მოდელი | კონფიგურაცია | წონა |
 |--------|--------------|------|
@@ -210,6 +242,7 @@ pip install -r requirements.txt
    python main.py
    ```
 3. შედეგი: `data/processed/submission.csv` და `data/processed/feature_importance.png`
+4. არასავალდებულო: `python evaluate.py` უშვებს 5-fold cross-validation-ს (`--folds N`); `pytest` უშვებს ტესტებს.
 
 ---
 
@@ -217,16 +250,19 @@ pip install -r requirements.txt
 
 ```
 ├── main.py                     # Pipeline-ის შესასვლელი წერტილი
-├── configs/config.yaml         # მონაცემების მისამართები, სამიზნე და ID სვეტები, preprocessing-ის პარამეტრები
+├── evaluate.py                 # თითოეული მოდელის და ensemble-ის K-fold CV
+├── configs/config.yaml         # მონაცემების მისამართები, სამიზნე და ID სვეტები, ცდების რაოდენობა
 ├── requirements.txt
+├── tests/                      # pytest ტესტები (სინთეზურ მონაცემებზე, Kaggle-ის ფაილები არ სჭირდება)
+├── .github/workflows/tests.yml # CI: pytest ყოველ push-ზე
 └── src/
     ├── data/
-    │   ├── data_loader.py      # ჩატვირთვა კონფიგურაციიდან და სქემის ვალიდაცია
-    │   └── preprocess.py       # preprocessing-ის ადრეული ვერსია (main.py არ იყენებს)
+    │   └── data_loader.py      # ჩატვირთვა კონფიგურაციიდან და სქემის ვალიდაცია
     ├── features/
     │   └── preprocessor.py     # გაწმენდა, feature engineering, encoding, scaling
     └── models/
         ├── tuner.py            # XGBoost-ის hyperparameter optimization (Optuna)
+        ├── ensemble.py         # ხუთი მოდელი და ensemble-ის წონები
         ├── model_trainer.py    # ერთი XGBoost მოდელის დამოუკიდებელი ტრენინგი
         └── predictor.py        # პროგნოზი შენახული მოდელით
 ```
@@ -235,9 +271,8 @@ pip install -r requirements.txt
 
 ### სამომავლო გეგმა
 
-- K-fold cross-validation მოდელების უფრო სანდო შედარებისთვის
 - ensemble-ის წონების შერჩევა stacking meta-model-ით, ფიქსირებული წონების ნაცვლად
 - საბოლოო მოდელების ხელახალი ტრენინგი სრულ სატრენინგო მონაცემებზე
-- Unit test-ები და CI workflow (GitHub Actions)
+- Tuning-ის CV ციკლში გადატანა (ამჟამად `evaluate.py` XGBoost-ის ფიქსირებულ პარამეტრებს იყენებს)
 
 <p align="right"><a href="#english">🇺🇸 English ↑</a></p>
